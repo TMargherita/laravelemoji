@@ -15,6 +15,7 @@ class EmojiController extends Controller
     public function index()
     {
         $emoji =  Emoji::all();
+
         return view('emoji.index', compact('emoji'));
     }
 
@@ -25,7 +26,7 @@ class EmojiController extends Controller
      */
     public function create()
     {
-    //
+        return view ('emoji.create');
     }
 
     /**
@@ -36,9 +37,23 @@ class EmojiController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $data = $request->all();
+        
+        $request->validate([
+            'slug'=>'required',
+            'character'=>'required',
+            'unicodeName'=>'required',
+            'codePoint'=>'required',
+            'group'=>'required',
+            'subGroup'=>'required'
+        ]);
 
+        $emoji = new Emoji;
+        $emoji = fill($data);
+        $emoji->save();
+
+        return redirect()->route('emoji.show', $emoji);
+    }
     /**
      * Display the specified resource.
      *
@@ -47,7 +62,7 @@ class EmojiController extends Controller
      */
     public function show(Emoji $emoji)
     {
-        //
+        return view ('emoji.show', compact('emoji'));
     }
 
     /**
@@ -58,19 +73,35 @@ class EmojiController extends Controller
      */
     public function edit(Emoji $emoji)
     {
-        //
+      
+        return view('emoji.edit', compact('emoji'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Emoji  $emoji
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Emoji $emoji)
+    public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+
+        $request->validate([
+            'slug'=>'required',
+            'character'=>'required',
+            'unicodeName'=>'required',
+            'codePoint'=>'required',
+            'group'=>'required',
+            'subGroup'=>'required'
+        ]);
+
+        $emoji = Emoji::find($id);
+        
+        $emoji->update($data);
+
+        return redirect()->route('emoji.show', $emoji);
     }
 
     /**
@@ -81,6 +112,8 @@ class EmojiController extends Controller
      */
     public function destroy(Emoji $emoji)
     {
-        //
+        $emoji = Emoji::find($id);
+        $emoji->delete();
+        return redirect('/emoji')->withSuccess(['Emoji deleted successfully!!']);
     }
 }

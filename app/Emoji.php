@@ -8,5 +8,5 @@ class Emoji extends Model
 {
    protected $table = 'emoji';
 
-   
+   protected $guarded = [];
 }
